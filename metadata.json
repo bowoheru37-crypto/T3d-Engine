@@ -1,0 +1,6 @@
+{
+  "name": "T3D Engine",
+  "description": "3D Mobile Game Engine with lightweight Kotlin Coroutines rigid-body physics, CGI Movie camera director, character rigging studio, GPU particles, procedural terrain, and visual 3D canvas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

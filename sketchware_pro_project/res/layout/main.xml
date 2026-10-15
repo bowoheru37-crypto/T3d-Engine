@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgDark">
+
+    <!-- 1. Native Zero-GC Hardware-Accelerated 3D Surface View -->
+    <com.t3d.sketchware.engine.T3DSurfaceView
+        android:id="@+id/t3d_surface_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 2. Overlay HUD Controls for Sketchware Pro Development -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:background="#880A0E17">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="T3D Sketchware Studio (v7.0.0)"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_fps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FPS: 60 (0.0ms)"
+            android:textColor="@color/colorAccentGreen"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:paddingRight="12dp" />
+
+        <TextView
+            android:id="@+id/tv_entities"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Entities: 3"
+            android:textColor="@color/textMuted"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <!-- 3. Bottom Action Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:background="#AA0F172A">
+
+        <Button
+            android:id="@+id/btn_add_cube"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="+ Cube"
+            android:textColor="@color/textWhite"
+            android:background="#1E293B"
+            android:layout_marginRight="4dp" />
+
+        <Button
+            android:id="@+id/btn_add_sphere"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="+ Sphere"
+            android:textColor="@color/textWhite"
+            android:background="#1E293B"
+            android:layout_marginRight="4dp" />
+
+        <Button
+            android:id="@+id/btn_add_terrain"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="+ Terrain"
+            android:textColor="@color/textWhite"
+            android:background="#1E293B"
+            android:layout_marginRight="4dp" />
+
+        <Button
+            android:id="@+id/btn_eco"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="60 FPS"
+            android:textColor="@color/colorAccent"
+            android:background="#1E293B"
+            android:layout_marginRight="4dp" />
+
+        <Button
+            android:id="@+id/btn_reset"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="Reset"
+            android:textColor="#FF3B30"
+            android:background="#1E293B" />
+    </LinearLayout>
+
+</FrameLayout>

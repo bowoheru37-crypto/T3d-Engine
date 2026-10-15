@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">T3D Sketchware Studio</string>
+    <string name="btn_rotate">Putar Kamera</string>
+    <string name="btn_add_shape">Tambah Objek 3D</string>
+    <string name="btn_eco_mode">Eco Mode (30 FPS)</string>
+    <string name="btn_reset_scene">Reset Scene</string>
+    <string name="stats_fps">FPS: 60</string>
+    <string name="stats_entities">Entities: 0</string>
+</resources>

@@ -1,0 +1,26 @@
+{
+  "sc_id": "701",
+  "app_name": "T3D Sketchware Studio",
+  "package_name": "com.t3d.sketchware",
+  "project_name": "T3D_Sketchware_Pro_V7",
+  "version_code": "1",
+  "version_name": "1.0.0",
+  "sketchware_pro_version": "v7.0.0-stable",
+  "compiler": {
+    "java_compatibility": "1.8",
+    "use_lambda": false,
+    "use_jetpack": false,
+    "use_d8": true,
+    "enable_r8_shrinking": true
+  },
+  "device_profile": {
+    "min_sdk": 21,
+    "target_sdk": 34,
+    "min_ram_mb": 1024,
+    "large_heap": true,
+    "hardware_accelerated": true
+  },
+  "custom_components": [
+    "com.t3d.sketchware.engine.T3DSurfaceView"
+  ]
+}
