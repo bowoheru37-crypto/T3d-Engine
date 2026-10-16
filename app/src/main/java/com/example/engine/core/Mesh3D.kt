@@ -152,6 +152,22 @@ class Mesh(
     }
 
     companion object {
+        fun createQuad(width: Float = 1.0f, height: Float = 1.0f, color: Color4 = Color4.WHITE): Mesh {
+            val hw = width * 0.5f
+            val hh = height * 0.5f
+            val mesh = Mesh("Quad")
+            mesh.vertices.add(Vertex(position = Vector3(-hw, -hh, 0f), normal = Vector3(0f, 0f, 1f), uv = Vector2(0f, 0f), color = color))
+            mesh.vertices.add(Vertex(position = Vector3( hw, -hh, 0f), normal = Vector3(0f, 0f, 1f), uv = Vector2(1f, 0f), color = color))
+            mesh.vertices.add(Vertex(position = Vector3( hw,  hh, 0f), normal = Vector3(0f, 0f, 1f), uv = Vector2(1f, 1f), color = color))
+            mesh.vertices.add(Vertex(position = Vector3(-hw,  hh, 0f), normal = Vector3(0f, 0f, 1f), uv = Vector2(0f, 1f), color = color))
+
+            mesh.triangles.add(Triangle(0, 1, 2, Vector3(0f, 0f, 1f)))
+            mesh.triangles.add(Triangle(0, 2, 3, Vector3(0f, 0f, 1f)))
+            mesh.recalculateNormals()
+            mesh.recalculateAABB()
+            return mesh
+        }
+
         fun createPlane(width: Float = 10.0f, depth: Float = 10.0f, color: Color4 = Color4(0.3f, 0.35f, 0.4f, 1f)): Mesh {
             val hw = width * 0.5f
             val hd = depth * 0.5f
@@ -170,26 +186,28 @@ class Mesh(
         fun createCube(size: Float = 1.0f, color: Color4 = Color4(0.2f, 0.7f, 0.9f, 1f)): Mesh {
             val h = size * 0.5f
             val mesh = Mesh("Cube")
-            val positions = arrayOf(
-                // Front
-                Vector3(-h, -h,  h), Vector3( h, -h,  h), Vector3( h,  h,  h), Vector3(-h,  h,  h),
-                // Back
-                Vector3( h, -h, -h), Vector3(-h, -h, -h), Vector3(-h,  h, -h), Vector3( h,  h, -h),
-                // Top
-                Vector3(-h,  h,  h), Vector3( h,  h,  h), Vector3( h,  h, -h), Vector3(-h,  h, -h),
-                // Bottom
-                Vector3(-h, -h, -h), Vector3( h, -h, -h), Vector3( h, -h,  h), Vector3(-h, -h,  h),
-                // Left
-                Vector3(-h, -h, -h), Vector3(-h, -h,  h), Vector3(-h,  h,  h), Vector3(-h,  h, -h),
-                // Right
-                Vector3( h, -h,  h), Vector3( h, -h, -h), Vector3( h,  h, -h), Vector3( h,  h,  h)
+            val faces = arrayOf(
+                // Front (+Z)
+                arrayOf(Vector3(-h, -h,  h), Vector3( h, -h,  h), Vector3( h,  h,  h), Vector3(-h,  h,  h)),
+                // Back (-Z)
+                arrayOf(Vector3( h, -h, -h), Vector3(-h, -h, -h), Vector3(-h,  h, -h), Vector3( h,  h, -h)),
+                // Top (+Y)
+                arrayOf(Vector3(-h,  h,  h), Vector3( h,  h,  h), Vector3( h,  h, -h), Vector3(-h,  h, -h)),
+                // Bottom (-Y)
+                arrayOf(Vector3(-h, -h, -h), Vector3( h, -h, -h), Vector3( h, -h,  h), Vector3(-h, -h,  h)),
+                // Left (-X)
+                arrayOf(Vector3(-h, -h, -h), Vector3(-h, -h,  h), Vector3(-h,  h,  h), Vector3(-h,  h, -h)),
+                // Right (+X)
+                arrayOf(Vector3( h, -h,  h), Vector3( h, -h, -h), Vector3( h,  h, -h), Vector3( h,  h,  h))
             )
 
-            for (p in positions) {
-                mesh.vertices.add(Vertex(position = p, color = color))
-            }
+            val uvs = arrayOf(Vector2(0f, 0f), Vector2(1f, 0f), Vector2(1f, 1f), Vector2(0f, 1f))
 
-            for (f in 0 until 6) {
+            for (f in faces.indices) {
+                val pts = faces[f]
+                for (i in 0..3) {
+                    mesh.vertices.add(Vertex(position = pts[i], uv = uvs[i], color = color))
+                }
                 val base = f * 4
                 mesh.triangles.add(Triangle(base, base + 1, base + 2))
                 mesh.triangles.add(Triangle(base, base + 2, base + 3))

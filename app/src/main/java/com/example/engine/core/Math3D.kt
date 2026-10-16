@@ -183,9 +183,16 @@ data class Matrix4x4(val m: FloatArray = FloatArray(16)) {
         }
 
         fun lookAt(eye: Vector3, target: Vector3, up: Vector3 = Vector3.UP): Matrix4x4 {
-            val zAxis = (eye - target).normalized()
-            val xAxis = up.cross(zAxis).normalized()
-            val yAxis = zAxis.cross(xAxis)
+            var zAxis = (eye - target).normalized()
+            if (zAxis.lengthSquared() < 0.00001f) {
+                zAxis = Vector3(0f, 0f, 1f)
+            }
+            var safeUp = up
+            if (abs(safeUp.dot(zAxis)) > 0.999f) {
+                safeUp = if (abs(zAxis.y) > 0.999f) Vector3(0f, 0f, 1f) else Vector3(0f, 1f, 0f)
+            }
+            val xAxis = safeUp.cross(zAxis).normalized()
+            val yAxis = zAxis.cross(xAxis).normalized()
 
             return Matrix4x4(floatArrayOf(
                 xAxis.x, xAxis.y, xAxis.z, -xAxis.dot(eye),
@@ -196,18 +203,49 @@ data class Matrix4x4(val m: FloatArray = FloatArray(16)) {
         }
 
         fun perspective(fovYDeg: Float, aspect: Float, near: Float, far: Float): Matrix4x4 {
-            val tanHalfFov = tan(Math.toRadians(fovYDeg.toDouble() / 2.0)).toFloat()
-            val f = 1f / tanHalfFov
-            val rangeInv = 1f / (near - far)
+            val safeAspect = if (aspect <= 0.001f) 1.0f else aspect
+            val safeNear = if (near <= 0.001f) 0.1f else near
+            val safeFar = if (far <= safeNear) safeNear + 100f else far
+            val tanHalfFov = tan(Math.toRadians((fovYDeg.coerceIn(10f, 170f) / 2.0))).toFloat()
+            val f = 1f / max(0.0001f, tanHalfFov)
+            val rangeInv = 1f / (safeNear - safeFar)
 
             return Matrix4x4(floatArrayOf(
-                f / aspect, 0f, 0f, 0f,
+                f / safeAspect, 0f, 0f, 0f,
                 0f, f, 0f, 0f,
-                0f, 0f, (far + near) * rangeInv, 2f * far * near * rangeInv,
+                0f, 0f, (safeFar + safeNear) * rangeInv, 2f * safeFar * safeNear * rangeInv,
                 0f, 0f, -1f, 0f
             ))
         }
+
+        fun ortho(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): Matrix4x4 {
+            val rL = 1f / (right - left)
+            val tB = 1f / (top - bottom)
+            val fN = 1f / (far - near)
+            return Matrix4x4(floatArrayOf(
+                2f * rL, 0f, 0f, -(right + left) * rL,
+                0f, 2f * tB, 0f, -(top + bottom) * tB,
+                0f, 0f, -2f * fN, -(far + near) * fN,
+                0f, 0f, 0f, 1f
+            ))
+        }
     }
+}
+
+object FastTrig {
+    private const val TABLE_SIZE = 3600
+    private val sinTable = FloatArray(TABLE_SIZE) { i ->
+        sin(Math.toRadians(i * 360.0 / TABLE_SIZE)).toFloat()
+    }
+
+    fun sinDeg(deg: Float): Float {
+        var d = deg % 360f
+        if (d < 0) d += 360f
+        val idx = ((d / 360f) * TABLE_SIZE).toInt().coerceIn(0, TABLE_SIZE - 1)
+        return sinTable[idx]
+    }
+
+    fun cosDeg(deg: Float): Float = sinDeg(deg + 90f)
 }
 
 data class AABB(

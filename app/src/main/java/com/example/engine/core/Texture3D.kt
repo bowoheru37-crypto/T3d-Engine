@@ -85,6 +85,17 @@ data class ProceduralTexture(
         }
     }
 
+    fun samplePS2(u: Float, v: Float, time: Float = 0f, ditherLevels: Int = 16): Color4 {
+        val col = sample(u, v, time)
+        val q = (ditherLevels.coerceIn(4, 64) - 1).toFloat()
+        return Color4(
+            (round(col.r * q) / q).coerceIn(0f, 1f),
+            (round(col.g * q) / q).coerceIn(0f, 1f),
+            (round(col.b * q) / q).coerceIn(0f, 1f),
+            col.a
+        )
+    }
+
     companion object {
         fun presets(): List<ProceduralTexture> = listOf(
             ProceduralTexture("Neon Cyber Grid", ProceduralTextureType.CYBER_GRID, primaryColor = Color4(0f, 0.95f, 1f, 1f), secondaryColor = Color4(0.04f, 0.07f, 0.12f, 1f), scale = 6f, isEmissive = true),
