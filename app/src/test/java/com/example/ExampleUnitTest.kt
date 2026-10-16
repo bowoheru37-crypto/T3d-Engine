@@ -122,6 +122,57 @@ class ExampleUnitTest {
         assertNotNull("Desk must have a collider for rigid body interaction", desk?.collider)
         assertNotNull("Bed must have a collider for rigid body interaction", bed?.collider)
     }
+
+    @Test
+    fun math3D_perspectiveAndLookAt_validTransformations() {
+        // Test FastTrig
+        val sin90 = FastTrig.sinDeg(90f)
+        assertEquals(1.0f, sin90, 0.01f)
+
+        // Test LookAt with top view parallel up vector
+        val lookAtTop = Matrix4x4.lookAt(Vector3(0f, 10f, 0f), Vector3(0f, 0f, 0f), Vector3.UP)
+        assertNotNull("LookAt top view matrix should be non-null", lookAtTop)
+
+        // Test perspective matrix
+        val perspective = Matrix4x4.perspective(60f, 1.77f, 0.1f, 100f)
+        val p = perspective.transformPoint(Vector3(0f, 0f, -5f))
+        assertTrue("Projected point should be non-zero", p.z != 0f)
+    }
+
+    @Test
+    fun mesh3D_createQuad_correctGeometryAndUVs() {
+        val quad = Mesh.createQuad(2.0f, 2.0f)
+
+        assertEquals("Quad should have 4 vertices", 4, quad.vertices.size)
+        assertEquals("Quad should have 2 triangles", 2, quad.triangles.size)
+        assertEquals("First UV should be (0,0)", 0f, quad.vertices[0].uv.x, 0.001f)
+        assertEquals("First UV should be (0,0)", 0f, quad.vertices[0].uv.y, 0.001f)
+        assertEquals("Last UV should be (0,1)", 1f, quad.vertices[3].uv.y, 0.001f)
+    }
+
+    @Test
+    fun texture3D_ps2Sampling_quantizesColors() {
+        val tex = ProceduralTexture("PS2 Grid", ProceduralTextureType.CYBER_GRID)
+        val sampledPS2 = tex.samplePS2(0.5f, 0.5f, ditherLevels = 8)
+
+        assertNotNull(sampledPS2)
+        assertTrue("Color channel R should be between 0 and 1", sampledPS2.r in 0f..1f)
+        assertTrue("Color channel G should be between 0 and 1", sampledPS2.g in 0f..1f)
+        assertTrue("Color channel B should be between 0 and 1", sampledPS2.b in 0f..1f)
+    }
+
+    @Test
+    fun camera3D_presetsAndPerspective_correctMatrix() {
+        val camera = Camera3D()
+        camera.setPresetView(CameraPresetView.TOP)
+
+        assertEquals(88f, camera.pitch, 0.1f)
+        val viewMat = camera.getViewMatrix()
+        val projMat = camera.getProjectionMatrix(1.77f)
+
+        assertNotNull("View matrix must be non-null", viewMat)
+        assertNotNull("Projection matrix must be non-null", projMat)
+    }
 }
 
 

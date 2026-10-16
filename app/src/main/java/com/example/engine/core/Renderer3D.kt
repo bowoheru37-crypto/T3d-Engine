@@ -99,13 +99,11 @@ class Renderer3D {
                 val worldNormal = modelMatrix.transformVector(v.normal).normalized()
                 val clipPos = mvp.transformPoint(v.position)
 
-                // Convert NDC (-1..1) to screen coordinates
-                val screenX = (clipPos.x * 0.5f + 0.5f) * width
-                val screenY = (-clipPos.y * 0.5f + 0.5f) * height
+                // Convert NDC (-1..1) to screen coordinates safely
                 val depth = clipPos.z
-                val isVisible = clipPos.z > 0f && clipPos.z < 100f &&
-                        screenX >= -100f && screenX <= width + 100f &&
-                        screenY >= -100f && screenY <= height + 100f
+                val isVisible = depth > 0.05f && depth < 100f
+                val screenX = if (depth > 0.01f) (clipPos.x * 0.5f + 0.5f) * width else -9999f
+                val screenY = if (depth > 0.01f) (-clipPos.y * 0.5f + 0.5f) * height else -9999f
 
                 projectedVertices.add(
                     ProjectedVertex(
@@ -115,7 +113,7 @@ class Renderer3D {
                         worldNormal = worldNormal,
                         worldPos = worldPos,
                         color = v.color,
-                        isVisible = isVisible
+                        isVisible = isVisible && screenX >= -200f && screenX <= width + 200f && screenY >= -200f && screenY <= height + 200f
                     )
                 )
             }
