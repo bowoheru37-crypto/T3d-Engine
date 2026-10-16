@@ -305,6 +305,31 @@ class EngineViewModel(application: Application) : AndroidViewModel(application) 
         showNotification("Simulation speed: ${speed}x")
     }
 
+    fun snapSelectedToGrid(gridStep: Float = 0.5f) {
+        val selected = getSelectedEntity() ?: return
+        val pos = selected.transform.position
+        selected.transform.position = Vector3(
+            round(pos.x / gridStep) * gridStep,
+            round(pos.y / gridStep) * gridStep,
+            round(pos.z / gridStep) * gridStep
+        )
+        showNotification("Grid Snapped ${selected.name} to ${gridStep}m grid")
+    }
+
+    fun groundSelectedToSurface() {
+        val selected = getSelectedEntity() ?: return
+        val meshAABB = selected.mesh?.aabb
+        val minYOffset = meshAABB?.min?.y ?: -0.5f
+        selected.transform.position.y = -minYOffset
+        showNotification("Grounded ${selected.name} onto surface")
+    }
+
+    fun alignSelectedToOrigin() {
+        val selected = getSelectedEntity() ?: return
+        selected.transform.position = Vector3(0f, 0.5f, 0f)
+        showNotification("Aligned ${selected.name} to World Center")
+    }
+
     fun stepTransformSelected(dx: Float, dy: Float, dz: Float) {
         val selected = getSelectedEntity() ?: return
         selected.transform.position.x += dx

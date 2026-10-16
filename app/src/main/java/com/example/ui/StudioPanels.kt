@@ -415,6 +415,37 @@ fun InspectorPanel(viewModel: EngineViewModel, uiState: EngineUiState) {
             Vector3Row(label = "Pos", vec = entity.transform.position) { entity.transform.position = it }
             Vector3Row(label = "Rot", vec = entity.transform.rotation) { entity.transform.rotation = it }
             Vector3Row(label = "Scale", vec = entity.transform.scale) { entity.transform.scale = it }
+
+            // Placement & Alignment Actions
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Surface(
+                    color = DarkNavy,
+                    shape = RoundedCornerShape(4.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, CyberCyan.copy(alpha = 0.5f)),
+                    modifier = Modifier.weight(1f).clickable { viewModel.snapSelectedToGrid(0.5f) }
+                ) {
+                    Text("Grid Snap (0.5m)", color = CyberCyan, fontSize = 8.sp, modifier = Modifier.padding(vertical = 4.dp), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                }
+                Surface(
+                    color = DarkNavy,
+                    shape = RoundedCornerShape(4.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, CyberGreen.copy(alpha = 0.5f)),
+                    modifier = Modifier.weight(1f).clickable { viewModel.groundSelectedToSurface() }
+                ) {
+                    Text("Ground Surface", color = CyberGreen, fontSize = 8.sp, modifier = Modifier.padding(vertical = 4.dp), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                }
+                Surface(
+                    color = DarkNavy,
+                    shape = RoundedCornerShape(4.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, CyberAmber.copy(alpha = 0.5f)),
+                    modifier = Modifier.weight(1f).clickable { viewModel.alignSelectedToOrigin() }
+                ) {
+                    Text("Center Origin", color = CyberAmber, fontSize = 8.sp, modifier = Modifier.padding(vertical = 4.dp), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                }
+            }
         }
 
         // Section: Mesh & Geometry Stats
