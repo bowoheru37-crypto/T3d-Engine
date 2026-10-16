@@ -1,10 +1,12 @@
 # T3D Engine - ProGuard / R8 Optimization Rules (Low-RAM & itel A70 Profile)
 
-# 1. General Optimizations
+# 1. General Optimizations & Aggressive Shrinking
 -repackageclasses ''
 -allowaccessmodification
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
+-optimizationpasses 5
+-overloadaggressively
 -verbose
 
 # 2. Keep Compose & UI Foundations

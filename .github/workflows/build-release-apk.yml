@@ -59,7 +59,7 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Make Gradle executable
-        run: chmod +x ./gradlew || true
+        run: chmod +x ./gradlew
 
       - name: Prepare Signing Key
         run: |
@@ -95,7 +95,7 @@ jobs:
           echo "LOW_RAM_OPTIMIZATION_ENABLED=true" >> .env
           echo "TARGET_DEVICE_PROFILE=${{ github.event.inputs.target_device_profile || 'itel_A70_LowEntry_Optimized' }}" >> .env
 
-      - name: Build Optimized APK with Gradle
+      - name: Build Optimized APK with Gradle Wrapper
         env:
           KEYSTORE_PATH: ${{ env.KEYSTORE_PATH }}
           STORE_PASSWORD: ${{ env.STORE_PASSWORD }}
@@ -103,9 +103,17 @@ jobs:
         run: |
           BUILD_CMD="${{ github.event.inputs.build_type || 'assembleRelease' }}"
           echo "Executing Gradle task: $BUILD_CMD with low-RAM / itel A70 compiler optimizations..."
-          gradle $BUILD_CMD --no-daemon --stacktrace \
+          ./gradlew $BUILD_CMD --no-daemon --stacktrace \
             -Dorg.gradle.jvmargs="-Xmx3072m -XX:+UseG1GC -XX:+ParallelRefProcEnabled" \
             -Pandroid.enableR8.fullMode=true
+
+      - name: Package Sketchware Pro Source Bundle
+        run: |
+          mkdir -p build_output/packages
+          if [ -d "sketchware_pro_project" ]; then
+            echo "Packaging Sketchware Pro V7.0.0 Project Source..."
+            zip -r build_output/packages/T3D-Engine-SketchwarePro-V7.0.0-Source.zip sketchware_pro_project/
+          fi
 
       - name: Organize APK Artifacts & Generate Checksums
         id: organize_artifacts
@@ -158,6 +166,7 @@ jobs:
           name: T3D-Engine-itelA70-LowRAM-Release-APK
           path: |
             build_output/apks/*.apk
+            build_output/packages/*.zip
             build_output/metadata/checksums.sha256
             build_output/metadata/DEVICE_COMPATIBILITY_INFO.md
           retention-days: 30
@@ -171,6 +180,7 @@ jobs:
           body_path: build_output/metadata/DEVICE_COMPATIBILITY_INFO.md
           files: |
             build_output/apks/*.apk
+            build_output/packages/*.zip
             build_output/metadata/checksums.sha256
           draft: false
           prerelease: false
